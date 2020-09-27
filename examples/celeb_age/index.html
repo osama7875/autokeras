@@ -1,0 +1,1005 @@
+
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for AutoKeras.">
+      
+      
+        <link rel="canonical" href="http://autokeras.com/examples/celeb_age/">
+      
+      
+      <link rel="shortcut icon" href="/img/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-5.5.14">
+    
+    
+      
+        <title>Celeb age - AutoKeras</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.d3202873.min.css">
+      
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ff0a5ce4.min.css">
+      
+      
+        
+        
+        <meta name="theme-color" content="#ef5552">
+      
+    
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+    
+      
+        
+<script>window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga("create","UA-44322747-3","autokeras.com"),ga("set","anonymizeIp",!0),ga("send","pageview"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){if(this.value){var e=document.location.pathname;ga("send","pageview",e+"?q="+this.value)}})}),document.addEventListener("DOMContentSwitch",function(){ga("send","pageview",document.location.pathname)})</script>
+<script async src="https://www.google-analytics.com/analytics.js"></script>
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="red" data-md-color-accent="red">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="http://autokeras.com" title="AutoKeras" class="md-header-nav__button md-logo" aria-label="AutoKeras">
+      
+  <img src="/img/logo_white.svg" alt="logo">
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      
+        <div class="md-header-nav__ellipsis">
+          <span class="md-header-nav__topic md-ellipsis">
+            AutoKeras
+          </span>
+          <span class="md-header-nav__topic md-ellipsis">
+            
+              Celeb age
+            
+          </span>
+        </div>
+      
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active">
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header-nav__source">
+        
+<a href="https://github.com/keras-team/autokeras" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+        
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="http://autokeras.com" title="AutoKeras" class="md-nav__button md-logo" aria-label="AutoKeras">
+      
+  <img src="/img/logo_white.svg" alt="logo">
+
+    </a>
+    AutoKeras
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/keras-team/autokeras" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../.." title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../install/" title="Installation" class="md-nav__link">
+      Installation
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+    
+    <label class="md-nav__link" for="nav-3">
+      Tutorials
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Tutorials" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        <span class="md-nav__icon md-icon"></span>
+        Tutorials
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../tutorial/overview/" title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../tutorial/image_classification/" title="Image Classification" class="md-nav__link">
+      Image Classification
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../tutorial/image_regression/" title="Image Regression" class="md-nav__link">
+      Image Regression
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../tutorial/text_classification/" title="Text Classification" class="md-nav__link">
+      Text Classification
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../tutorial/text_regression/" title="Text Regression" class="md-nav__link">
+      Text Regression
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../tutorial/structured_data_classification/" title="Structured Data Classification" class="md-nav__link">
+      Structured Data Classification
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../tutorial/structured_data_regression/" title="Structured Data Regression" class="md-nav__link">
+      Structured Data Regression
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../tutorial/multi/" title="Multi-Modal and Multi-Task" class="md-nav__link">
+      Multi-Modal and Multi-Task
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../tutorial/customized/" title="Customized Model" class="md-nav__link">
+      Customized Model
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../tutorial/export/" title="Export Model" class="md-nav__link">
+      Export Model
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../tutorial/faq/" title="FAQ" class="md-nav__link">
+      FAQ
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4">
+    
+    <label class="md-nav__link" for="nav-4">
+      Extensions
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Extensions" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        <span class="md-nav__icon md-icon"></span>
+        Extensions
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../extensions/tf_cloud/" title="TensorFlow Cloud" class="md-nav__link">
+      TensorFlow Cloud
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../extensions/trains/" title="TRAINS" class="md-nav__link">
+      TRAINS
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../docker/" title="Docker" class="md-nav__link">
+      Docker
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../contributing/" title="Contributing Guide" class="md-nav__link">
+      Contributing Guide
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-7" type="checkbox" id="nav-7">
+    
+    <label class="md-nav__link" for="nav-7">
+      Documentation
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Documentation" data-md-level="1">
+      <label class="md-nav__title" for="nav-7">
+        <span class="md-nav__icon md-icon"></span>
+        Documentation
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../image_classifier/" title="ImageClassifier" class="md-nav__link">
+      ImageClassifier
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../image_regressor/" title="ImageRegressor" class="md-nav__link">
+      ImageRegressor
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../text_classifier/" title="TextClassifier" class="md-nav__link">
+      TextClassifier
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../text_regressor/" title="TextRegressor" class="md-nav__link">
+      TextRegressor
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../structured_data_classifier/" title="StructuredDataClassifier" class="md-nav__link">
+      StructuredDataClassifier
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../structured_data_regressor/" title="StructuredDataRegressor" class="md-nav__link">
+      StructuredDataRegressor
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../auto_model/" title="AutoModel" class="md-nav__link">
+      AutoModel
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../base/" title="Base Class" class="md-nav__link">
+      Base Class
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../node/" title="Node" class="md-nav__link">
+      Node
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../block/" title="Block" class="md-nav__link">
+      Block
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../about/" title="About" class="md-nav__link">
+      About
+    </a>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                  
+                
+                
+                  <h1>Celeb age</h1>
+                
+                <p>Regression tasks estimate a numeric variable, such as the price of a house or voter
+turnout.</p>
+<p>This example is adapted from a
+<a href="https://gist.github.com/mapmeld/98d1e9839f2d1f9c4ee197953661ed07">notebook</a> which
+estimates a person's age from their image, trained on the
+<a href="https://data.vision.ee.ethz.ch/cvl/rrothe/imdb-wiki/">IMDB-WIKI</a> photographs of famous
+people.</p>
+<p>First, prepare your image data in a numpy.ndarray or tensorflow.Dataset format. Each
+image must have the same shape, meaning each has the same width, height, and color
+channels as other images in the set.</p>
+<div class="highlight"><pre><span></span><code><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">### Connect your Google Drive for Data</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">from</span> <span class="nn">google.colab</span> <span class="kn">import</span> <span class="n">drive</span>
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">from</span> <span class="nn">scipy.io</span> <span class="kn">import</span> <span class="n">loadmat</span>
+<span class="kn">from</span> <span class="nn">tensorflow.python.keras.utils.data_utils</span> <span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">import</span> <span class="nn">autokeras</span> <span class="k">as</span> <span class="nn">ak</span>
+<span class="n">drive</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s2">&quot;/content/drive&quot;</span><span class="p">)</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">### Install AutoKeras and TensorFlow</span>
+
+<span class="sd">Download the master branch to your Google Drive for this tutorial. In general, you can</span>
+<span class="sd">use *pip install autokeras* .</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">&quot;&quot;&quot;shell</span>
+<span class="sd">!pip install  -v &quot;/content/drive/My Drive/AutoKeras-dev/autokeras-master.zip&quot;</span>
+<span class="sd">!pip uninstall keras-tuner</span>
+<span class="sd">!pip install</span>
+<span class="sd">git+git://github.com/keras-team/keras-tuner.git@d2d69cba21a0b482a85ce2a38893e2322e139c01</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">&quot;&quot;&quot;shell</span>
+<span class="sd">!pip install tensorflow==2.2.0</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">###**Import IMDB Celeb images and metadata**</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">&quot;&quot;&quot;shell</span>
+<span class="sd">!mkdir ./drive/My\ Drive/mlin/celebs</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">&quot;&quot;&quot;shell</span>
+<span class="sd">! wget -O ./drive/My\ Drive/mlin/celebs/imdb_0.tar</span>
+<span class="sd">https://data.vision.ee.ethz.ch/cvl/rrothe/imdb-wiki/static/imdb_0.tar</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">&quot;&quot;&quot;shell</span>
+<span class="sd">! cd ./drive/My\ Drive/mlin/celebs &amp;&amp; tar -xf imdb_0.tar</span>
+<span class="sd">! rm ./drive/My\ Drive/mlin/celebs/imdb_0.tar</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Uncomment and run the below cell if you need to re-run the cells again and above don&#39;t</span>
+<span class="sd">need to install everything from the beginning.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># ! cd ./drive/My\ Drive/mlin/celebs.</span>
+
+<span class="sd">&quot;&quot;&quot;shell</span>
+<span class="sd">! ls ./drive/My\ Drive/mlin/celebs/imdb/</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">&quot;&quot;&quot;shell</span>
+<span class="sd">! wget https://data.vision.ee.ethz.ch/cvl/rrothe/imdb-wiki/static/imdb_meta.tar</span>
+<span class="sd">! tar -xf imdb_meta.tar</span>
+<span class="sd">! rm imdb_meta.tar</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">###**Converting from MATLAB date to actual Date-of-Birth**</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">datenum_to_datetime</span><span class="p">(</span><span class="n">datenum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert Matlab datenum into Python datetime.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">days</span> <span class="o">=</span> <span class="n">datenum</span> <span class="o">%</span> <span class="mi">1</span>
+    <span class="n">hours</span> <span class="o">=</span> <span class="n">days</span> <span class="o">%</span> <span class="mi">1</span> <span class="o">*</span> <span class="mi">24</span>
+    <span class="n">minutes</span> <span class="o">=</span> <span class="n">hours</span> <span class="o">%</span> <span class="mi">1</span> <span class="o">*</span> <span class="mi">60</span>
+    <span class="n">seconds</span> <span class="o">=</span> <span class="n">minutes</span> <span class="o">%</span> <span class="mi">1</span> <span class="o">*</span> <span class="mi">60</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">datetime</span><span class="o">.</span><span class="n">fromordinal</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">datenum</span><span class="p">))</span>
+            <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">days</span><span class="p">))</span>
+            <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">hours</span><span class="p">))</span>
+            <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">minutes</span><span class="p">))</span>
+            <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="nb">round</span><span class="p">(</span><span class="n">seconds</span><span class="p">))</span>
+            <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">366</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">datenum_to_datetime</span><span class="p">(</span><span class="mi">700000</span><span class="p">)</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="n">datenum_to_datetime</span><span class="p">(</span><span class="mi">734963</span><span class="p">))</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">### **Opening MatLab file to Pandas DataFrame**</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">loadmat</span><span class="p">(</span><span class="s2">&quot;imdb/imdb.mat&quot;</span><span class="p">)</span>
+
+
+<span class="n">mdata</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;imdb&quot;</span><span class="p">]</span>  <span class="c1"># variable in mat file</span>
+<span class="n">mdtype</span> <span class="o">=</span> <span class="n">mdata</span><span class="o">.</span><span class="n">dtype</span>  <span class="c1"># dtypes of structures are &quot;unsized objects&quot;</span>
+<span class="n">ndata</span> <span class="o">=</span> <span class="p">{</span><span class="n">n</span><span class="p">:</span> <span class="n">mdata</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">mdtype</span><span class="o">.</span><span class="n">names</span><span class="p">}</span>
+<span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">ndata</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+
+<span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">ndata</span><span class="o">.</span><span class="n">items</span><span class="p">())[</span><span class="n">col</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">num</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">col</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+        <span class="k">if</span> <span class="n">num</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">columns</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;dob&quot;</span><span class="p">:</span>
+                <span class="n">rows</span><span class="p">[</span><span class="n">num</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">datenum_to_datetime</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">)))</span>
+            <span class="k">elif</span> <span class="n">columns</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;photo_taken&quot;</span><span class="p">:</span>
+                <span class="n">rows</span><span class="p">[</span><span class="n">num</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">),</span> <span class="n">month</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">day</span><span class="o">=</span><span class="mi">30</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">rows</span><span class="p">[</span><span class="n">num</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+<span class="n">dt</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">row</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rows</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">dt</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;full_path&quot;</span><span class="p">])</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">### **Calculating age at time photo was taken**</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">df</span><span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;photo_taken&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;dob&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;int&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="mf">31558102e9</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">])</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">### **Creating dataset**</span>
+
+
+<span class="sd">* We sample 200 of the images which were included in this first download.</span>
+<span class="sd">* Images are resized to 128x128 to standardize shape and conserve memory</span>
+<span class="sd">* RGB images are converted to grayscale to standardize shape</span>
+<span class="sd">* Ages are converted to ints</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">df2numpy</span><span class="p">(</span><span class="n">train_set</span><span class="p">):</span>
+    <span class="n">images</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">img_path</span> <span class="ow">in</span> <span class="n">train_set</span><span class="p">[</span><span class="s2">&quot;full_path&quot;</span><span class="p">]:</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;./drive/My Drive/mlin/celebs/imdb/&quot;</span> <span class="o">+</span> <span class="n">img_path</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">))</span>
+            <span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;L&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;int32&quot;</span><span class="p">))</span>
+
+    <span class="n">image_inputs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+
+    <span class="n">ages</span> <span class="o">=</span> <span class="n">train_set</span><span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;int&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">image_inputs</span><span class="p">,</span> <span class="n">ages</span>
+
+
+<span class="n">train_set</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;full_path&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="s2">&quot;02&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span>
+<span class="n">train_imgs</span><span class="p">,</span> <span class="n">train_ages</span> <span class="o">=</span> <span class="n">df2numpy</span><span class="p">(</span><span class="n">train_set</span><span class="p">)</span>
+
+<span class="n">test_set</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;full_path&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="s2">&quot;02&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">test_imgs</span><span class="p">,</span> <span class="n">test_ages</span> <span class="o">=</span> <span class="n">df2numpy</span><span class="p">(</span><span class="n">test_set</span><span class="p">)</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">### **Training using AutoKeras**</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="c1"># Initialize the image regressor</span>
+<span class="n">reg</span> <span class="o">=</span> <span class="n">ak</span><span class="o">.</span><span class="n">ImageRegressor</span><span class="p">(</span><span class="n">max_trials</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>  <span class="c1"># AutoKeras tries 15 different models.</span>
+
+<span class="c1"># Find the best model for the given training data</span>
+<span class="n">reg</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_imgs</span><span class="p">,</span> <span class="n">train_ages</span><span class="p">)</span>
+
+<span class="c1"># Predict with the chosen model:</span>
+<span class="c1"># predict_y = reg.predict(test_images)  # Uncomment if required</span>
+
+<span class="c1"># Evaluate the chosen model with testing data</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reg</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">test_images</span><span class="p">,</span> <span class="n">test_ages</span><span class="p">))</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">### **Validation Data**</span>
+
+<span class="sd">By default, AutoKeras use the last 20% of training data as validation data. As shown in</span>
+<span class="sd">the example below, you can use validation_split to specify the percentage.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">reg</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
+    <span class="n">train_imgs</span><span class="p">,</span>
+    <span class="n">train_ages</span><span class="p">,</span>
+    <span class="c1"># Split the training data and use the last 15% as validation data.</span>
+    <span class="n">validation_split</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span>
+    <span class="n">epochs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">You can also use your own validation set instead of splitting it from the training data</span>
+<span class="sd">with validation_data.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">split</span> <span class="o">=</span> <span class="mi">460000</span>
+<span class="n">x_val</span> <span class="o">=</span> <span class="n">train_imgs</span><span class="p">[</span><span class="n">split</span><span class="p">:]</span>
+<span class="n">y_val</span> <span class="o">=</span> <span class="n">train_ages</span><span class="p">[</span><span class="n">split</span><span class="p">:]</span>
+<span class="n">x_train</span> <span class="o">=</span> <span class="n">train_imgs</span><span class="p">[:</span><span class="n">split</span><span class="p">]</span>
+<span class="n">y_train</span> <span class="o">=</span> <span class="n">train_ages</span><span class="p">[:</span><span class="n">split</span><span class="p">]</span>
+<span class="n">reg</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
+    <span class="n">x_train</span><span class="p">,</span>
+    <span class="n">y_train</span><span class="p">,</span>
+    <span class="c1"># Use your own validation set.</span>
+    <span class="n">validation_data</span><span class="o">=</span><span class="p">(</span><span class="n">x_val</span><span class="p">,</span> <span class="n">y_val</span><span class="p">),</span>
+    <span class="n">epochs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">### **Customized Search Space**</span>
+
+<span class="sd">For advanced users, you may customize your search space by using AutoModel instead of</span>
+<span class="sd">ImageRegressor. You can configure the ImageBlock for some high-level configurations,</span>
+<span class="sd">e.g., block_type for the type of neural network to search, normalize for whether to do</span>
+<span class="sd">data normalization, augment for whether to do data augmentation. You can also choose not</span>
+<span class="sd">to specify these arguments, which would leave the different choices to be tuned</span>
+<span class="sd">automatically. See the following example for detail.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="n">input_node</span> <span class="o">=</span> <span class="n">ak</span><span class="o">.</span><span class="n">ImageInput</span><span class="p">()</span>
+<span class="n">output_node</span> <span class="o">=</span> <span class="n">ak</span><span class="o">.</span><span class="n">ImageBlock</span><span class="p">(</span>
+    <span class="c1"># Only search ResNet architectures.</span>
+    <span class="n">block_type</span><span class="o">=</span><span class="s2">&quot;resnet&quot;</span><span class="p">,</span>
+    <span class="c1"># Normalize the dataset.</span>
+    <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="c1"># Do not do data augmentation.</span>
+    <span class="n">augment</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)(</span><span class="n">input_node</span><span class="p">)</span>
+<span class="n">output_node</span> <span class="o">=</span> <span class="n">ak</span><span class="o">.</span><span class="n">RegressionHead</span><span class="p">()(</span><span class="n">output_node</span><span class="p">)</span>
+<span class="n">reg</span> <span class="o">=</span> <span class="n">ak</span><span class="o">.</span><span class="n">AutoModel</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">input_node</span><span class="p">,</span> <span class="n">outputs</span><span class="o">=</span><span class="n">output_node</span><span class="p">,</span> <span class="n">max_trials</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">reg</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">The usage of AutoModel is similar to the functional API of Keras. Basically, you are</span>
+<span class="sd">building a graph, whose edges are blocks and the nodes are intermediate outputs of</span>
+<span class="sd">blocks. To add an edge from input_node to output_node with output_node =</span>
+<span class="sd">ak.some_block(input_node).</span>
+<span class="sd">You can even also use more fine grained blocks to customize the search space even</span>
+<span class="sd">further. See the following example.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="n">input_node</span> <span class="o">=</span> <span class="n">ak</span><span class="o">.</span><span class="n">ImageInput</span><span class="p">()</span>
+<span class="n">output_node</span> <span class="o">=</span> <span class="n">ak</span><span class="o">.</span><span class="n">Normalization</span><span class="p">()(</span><span class="n">input_node</span><span class="p">)</span>
+<span class="n">output_node</span> <span class="o">=</span> <span class="n">ak</span><span class="o">.</span><span class="n">ImageAugmentation</span><span class="p">(</span><span class="n">translation_factor</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)(</span><span class="n">output_node</span><span class="p">)</span>
+<span class="n">output_node</span> <span class="o">=</span> <span class="n">ak</span><span class="o">.</span><span class="n">ResNetBlock</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="s2">&quot;v2&quot;</span><span class="p">)(</span><span class="n">output_node</span><span class="p">)</span>
+<span class="n">output_node</span> <span class="o">=</span> <span class="n">ak</span><span class="o">.</span><span class="n">RegressionHead</span><span class="p">()(</span><span class="n">output_node</span><span class="p">)</span>
+<span class="n">clf</span> <span class="o">=</span> <span class="n">ak</span><span class="o">.</span><span class="n">AutoModel</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">input_node</span><span class="p">,</span> <span class="n">outputs</span><span class="o">=</span><span class="n">output_node</span><span class="p">,</span> <span class="n">max_trials</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">### **Data Format**</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">The AutoKeras ImageClassifier is quite flexible for the data format.</span>
+
+<span class="sd">For the image, it accepts data formats both with and without the channel dimension. The</span>
+<span class="sd">images in the IMDB-Wiki dataset do not have a channel dimension. Each image is a matrix</span>
+<span class="sd">with shape (128, 128). AutoKeras also accepts images with a channel dimension at last,</span>
+<span class="sd">e.g., (32, 32, 3), (28, 28, 1).</span>
+
+<span class="sd">For the classification labels, AutoKeras accepts both plain labels, i.e. strings or</span>
+<span class="sd">integers, and one-hot encoded labels, i.e. vectors of 0s and 1s.</span>
+
+<span class="sd">So if you prepare your data in the following way, the ImageClassifier should still work.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># Reshape the images to have the channel dimension.</span>
+<span class="n">train_imgs</span> <span class="o">=</span> <span class="n">train_imgs</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">train_imgs</span><span class="o">.</span><span class="n">shape</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="p">,))</span>
+<span class="n">test_imgs</span> <span class="o">=</span> <span class="n">test_imgs</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">test_imgs</span><span class="o">.</span><span class="n">shape</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="p">,))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">train_imgs</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>  <span class="c1"># (200, 128, 128, 1)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">test_imgs</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>  <span class="c1"># (100, 128, 128, 1)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">train_ages</span><span class="p">[:</span><span class="mi">3</span><span class="p">])</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">We also support using tf.data.Dataset format for the training data. In this case, the</span>
+<span class="sd">images would have to be 3-dimentional. The labels have to be one-hot encoded for</span>
+<span class="sd">multi-class classification to be wrapped into tensorflow Dataset.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="n">train_set</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">from_tensor_slices</span><span class="p">(((</span><span class="n">train_imgs</span><span class="p">,),</span> <span class="p">(</span><span class="n">train_ages</span><span class="p">,)))</span>
+<span class="n">test_set</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">from_tensor_slices</span><span class="p">(((</span><span class="n">test_imgs</span><span class="p">,),</span> <span class="p">(</span><span class="n">test_ages</span><span class="p">,)))</span>
+
+<span class="n">reg</span> <span class="o">=</span> <span class="n">ak</span><span class="o">.</span><span class="n">ImageRegressor</span><span class="p">(</span><span class="n">max_trials</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="c1"># Feed the tensorflow Dataset to the classifier.</span>
+<span class="n">reg</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_set</span><span class="p">)</span>
+<span class="c1"># Predict with the best model.</span>
+<span class="n">predicted_y</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_set</span><span class="p">)</span>
+<span class="c1"># Evaluate the best model with testing data.</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">clf</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">test_set</span><span class="p">))</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">## References</span>
+
+<span class="sd">[Main Reference</span>
+<span class="sd">Notebook](https://gist.github.com/mapmeld/98d1e9839f2d1f9c4ee197953661ed07),</span>
+<span class="sd">[Dataset](https://data.vision.ee.ethz.ch/cvl/rrothe/imdb-wiki/),</span>
+<span class="sd">[ImageRegressor](/image_regressor),</span>
+<span class="sd">[ResNetBlock](/block/#resnetblock-class),</span>
+<span class="sd">[ImageInput](/node/#imageinput-class),</span>
+<span class="sd">[AutoModel](/auto_model/#automodel-class),</span>
+<span class="sd">[ImageBlock](/block/#imageblock-class),</span>
+<span class="sd">[Normalization](/preprocessor/#normalization-class),</span>
+<span class="sd">[ImageAugmentation](/preprocessor/#image-augmentation-class),</span>
+<span class="sd">[RegressionHead](/head/#regressionhead-class).</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+</code></pre></div>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.2d1db4bd.min.js"></script>
+      <script src="../../assets/javascripts/bundle.6627ddf3.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.5eca75d3.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+        <script src="https://unpkg.com/mermaid@8.4.4/dist/mermaid.min.js"></script>
+      
+    
+  </body>
+</html>
