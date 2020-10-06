@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import kerastuner
 import tensorflow as tf
 
 from autokeras import blocks
@@ -24,10 +25,15 @@ def test_input_get_block_return_general_block():
     assert isinstance(input_node.get_block(), blocks.GeneralBlock)
 
 
-def test_structured_data_input_get_pps_cast_to_string():
-    input_node = nodes.StructuredDataInput()
-    input_node.dtype = tf.float32
-    assert isinstance(
-        input_node.get_hyper_preprocessors()[0].preprocessor,
-        preprocessors.CastToString,
-    )
+def test_time_series_input_node_build_to_a_tensor():
+    node = nodes.TimeseriesInput(shape=(32,), lookback=2)
+    _, output = node.build(kerastuner.HyperParameters())
+    assert isinstance(output, tf.Tensor)
+
+
+def test_time_series_input_node_deserialize_build_to_tensor():
+    node = nodes.TimeseriesInput(shape=(32,), lookback=2)
+    node = nodes.deserialize(nodes.serialize(node))
+    node.shape = (32,)
+    _, output = node.build(kerastuner.HyperParameters())
+    assert isinstance(output, tf.Tensor)
