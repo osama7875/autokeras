@@ -43,7 +43,8 @@ class Input(io_hypermodel.IOHyperModel, node_module.Node):
     """
 
     def build(self, hp):
-        return tf.keras.Input(shape=self.shape, dtype=tf.float32)
+        input_node = tf.keras.Input(shape=self.shape, dtype=tf.float32)
+        return input_node, input_node
 
     def get_adapter(self):
         return adapters.InputAdapter()
@@ -66,9 +67,12 @@ class ImageInput(Input):
     (samples, width, height, channels).
     """
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.has_channel_dim = False
+    def build(self, hp):
+        input_node = tf.keras.Input(shape=self.shape, dtype=tf.float32)
+        output_node = input_node
+        if len(output_node.shape) == 3:
+            output_node = tf.expand_dims(output_node, axis=-1)
+        return input_node, output_node
 
     def get_adapter(self):
         return adapters.ImageAdapter()
@@ -79,18 +83,6 @@ class ImageInput(Input):
     def get_block(self):
         return blocks.ImageBlock()
 
-    def config_from_analyser(self, analyser):
-        super().config_from_analyser(analyser)
-        self.has_channel_dim = analyser.has_channel_dim
-
-    def get_hyper_preprocessors(self):
-        hyper_preprocessors = []
-        if not self.has_channel_dim:
-            hyper_preprocessors.append(
-                hpps_module.DefaultHyperPreprocessor(preprocessors.AddOneDimension())
-            )
-        return hyper_preprocessors
-
 
 class TextInput(Input):
     """Input node for text data.
@@ -100,12 +92,12 @@ class TextInput(Input):
     sentence.
     """
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self._add_one_dimension = None
-
     def build(self, hp):
-        return tf.keras.Input(shape=self.shape, dtype=tf.string)
+        input_node = tf.keras.Input(shape=self.shape, dtype=tf.string)
+        output_node = input_node
+        if len(output_node.shape) == 1:
+            output_node = tf.expand_dims(output_node, axis=-1)
+        return input_node, output_node
 
     def get_adapter(self):
         return adapters.TextAdapter()
@@ -115,18 +107,6 @@ class TextInput(Input):
 
     def get_block(self):
         return blocks.TextBlock()
-
-    def config_from_analyser(self, analyser):
-        super().config_from_analyser(analyser)
-        self._add_one_dimension = len(analyser.shape) == 1
-
-    def get_hyper_preprocessors(self):
-        hyper_preprocessors = []
-        if self._add_one_dimension:
-            hyper_preprocessors.append(
-                hpps_module.DefaultHyperPreprocessor(preprocessors.AddOneDimension())
-            )
-        return hyper_preprocessors
 
 
 class StructuredDataInput(Input):
@@ -152,10 +132,10 @@ class StructuredDataInput(Input):
         super().__init__(**kwargs)
         self.column_names = column_names
         self.column_types = column_types
-        self.dtype = None
 
     def build(self, hp):
-        return tf.keras.Input(shape=self.shape, dtype=tf.string)
+        input_node = tf.keras.Input(shape=self.shape, dtype=self.dtype)
+        return input_node, input_node
 
     def get_config(self):
         config = super().get_config()
@@ -178,14 +158,6 @@ class StructuredDataInput(Input):
         self.column_names = analyser.column_names
         # Analyser keeps the specified ones and infer the missing ones.
         self.column_types = analyser.column_types
-
-    def get_hyper_preprocessors(self):
-        hyper_preprocessors = []
-        if self.dtype != tf.string:
-            hyper_preprocessors.append(
-                hpps_module.DefaultHyperPreprocessor(preprocessors.CastToString())
-            )
-        return hyper_preprocessors
 
 
 class TimeseriesInput(StructuredDataInput):
@@ -222,7 +194,10 @@ class TimeseriesInput(StructuredDataInput):
                 self.lookback,
                 self.shape[0],
             )
-        return tf.keras.Input(shape=self.shape, dtype=tf.float32)
+        print(self.shape)
+        print(self.dtype)
+        input_node = tf.keras.Input(shape=self.shape, dtype=self.dtype)
+        return input_node, input_node
 
     def get_config(self):
         config = super().get_config()
@@ -242,12 +217,11 @@ class TimeseriesInput(StructuredDataInput):
 
     def get_hyper_preprocessors(self):
         hyper_preprocessors = []
-        if self.dtype != tf.string:
-            hyper_preprocessors.append(
-                hpps_module.DefaultHyperPreprocessor(
-                    preprocessors.SlidingWindow(
-                        lookback=self.lookback, batch_size=self.batch_size
-                    )
+        hyper_preprocessors.append(
+            hpps_module.DefaultHyperPreprocessor(
+                preprocessors.SlidingWindow(
+                    lookback=self.lookback, batch_size=self.batch_size
                 )
             )
+        )
         return hyper_preprocessors

@@ -256,23 +256,26 @@ class Graph(kerastuner.HyperModel, serializable.Serializable):
         """Build the HyperModel into a Keras Model."""
         self._register_hps(hp)
         self.compile()
-        real_nodes = {}
-        for input_node in self.inputs:
-            node_id = self._node_to_id[input_node]
-            real_nodes[node_id] = input_node.build(hp)
+        keras_nodes = {}
+        keras_input_nodes = []
+        for node in self.inputs:
+            node_id = self._node_to_id[node]
+            input_node, output_node = node.build(hp)
+            keras_input_nodes.append(input_node)
+            keras_nodes[node_id] = output_node
         for block in self.blocks:
             temp_inputs = [
-                real_nodes[self._node_to_id[input_node]]
+                keras_nodes[self._node_to_id[input_node]]
                 for input_node in block.inputs
             ]
             outputs = block.build(hp, inputs=temp_inputs)
             outputs = nest.flatten(outputs)
             for output_node, real_output_node in zip(block.outputs, outputs):
-                real_nodes[self._node_to_id[output_node]] = real_output_node
+                keras_nodes[self._node_to_id[output_node]] = real_output_node
         model = tf.keras.Model(
-            [real_nodes[self._node_to_id[input_node]] for input_node in self.inputs],
+            keras_input_nodes,
             [
-                real_nodes[self._node_to_id[output_node]]
+                keras_nodes[self._node_to_id[output_node]]
                 for output_node in self.outputs
             ],
         )
