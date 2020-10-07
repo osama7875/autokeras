@@ -260,7 +260,8 @@ class Graph(kerastuner.HyperModel, serializable.Serializable):
         keras_input_nodes = []
         for node in self.inputs:
             node_id = self._node_to_id[node]
-            input_node, output_node = node.build(hp)
+            input_node = node.build_node(hp)
+            output_node = node.build(hp, input_node)
             keras_input_nodes.append(input_node)
             keras_nodes[node_id] = output_node
         for block in self.blocks:

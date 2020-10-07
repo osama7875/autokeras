@@ -26,14 +26,23 @@ def test_input_get_block_return_general_block():
 
 
 def test_time_series_input_node_build_to_a_tensor():
-    node = nodes.TimeseriesInput(shape=(32,), lookback=2)
-    _, output = node.build(kerastuner.HyperParameters())
+    node = nodes.TimeseriesInput(lookback=2)
+    node.shape = (32,)
+    hp = kerastuner.HyperParameters()
+
+    input_node = node.build_node(hp)
+    output = node.build(hp, input_node)
+
     assert isinstance(output, tf.Tensor)
 
 
 def test_time_series_input_node_deserialize_build_to_tensor():
-    node = nodes.TimeseriesInput(shape=(32,), lookback=2)
+    node = nodes.TimeseriesInput(lookback=2)
     node = nodes.deserialize(nodes.serialize(node))
     node.shape = (32,)
-    _, output = node.build(kerastuner.HyperParameters())
+    hp = kerastuner.HyperParameters()
+
+    input_node = node.build_node(hp)
+    output = node.build(hp, input_node)
+
     assert isinstance(output, tf.Tensor)

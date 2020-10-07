@@ -50,7 +50,7 @@ def deserialize_loss(loss):
     return tf.keras.losses.deserialize(loss)
 
 
-class Head(io_hypermodel.IOHyperModel, block_module.Block):
+class Head(io_hypermodel.IOHyperModel):
     """Base class for the heads, e.g. classification, regression.
 
     # Arguments

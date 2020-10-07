@@ -12,8 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from autokeras.engine import block as block_module
 
-class IOHyperModel(object):
+
+class IOHyperModel(block_module.Block):
     """A mixin class connecting the input nodes and heads with the adapters.
 
     This class is extended by the input nodes and the heads. The AutoModel calls the
@@ -21,9 +23,9 @@ class IOHyperModel(object):
     input nodes and heads.
     """
 
-    def __init__(self, shape=None, **kwargs):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.shape = shape
+        self.data_shape = None
         self.dtype = None
         self.batch_size = None
         self.num_samples = None
@@ -50,7 +52,7 @@ class IOHyperModel(object):
         # Arguments
             adapter: An instance of a subclass of autokeras.engine.Adapter.
         """
-        self.shape = analyser.shape
+        self.data_shape = analyser.shape
         self.dtype = analyser.dtype
         self.batch_size = analyser.batch_size
         self.num_samples = analyser.num_samples

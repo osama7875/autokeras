@@ -36,7 +36,7 @@ def test_two_classes_infer_binary_crossentropy():
     head.output_shape = (1,)
     head.build(
         kerastuner.HyperParameters(),
-        input_module.Input(shape=(32,)).build(kerastuner.HyperParameters())[1],
+        input_module.Input(shape=(32,)).build_node(kerastuner.HyperParameters()),
     )
     assert head.loss.name == "binary_crossentropy"
 
@@ -54,7 +54,7 @@ def test_three_classes_infer_categorical_crossentropy():
     head.output_shape = (1,)
     head.build(
         kerastuner.HyperParameters(),
-        input_module.Input(shape=(32,)).build(kerastuner.HyperParameters())[1],
+        input_module.Input(shape=(32,)).build_node(kerastuner.HyperParameters()),
     )
     assert head.loss.name == "categorical_crossentropy"
 
@@ -113,5 +113,5 @@ def test_segmentation():
     head.output_shape = (1,)
     head.build(
         kerastuner.HyperParameters(),
-        ak.Input(shape=(32,)).build(kerastuner.HyperParameters())[1],
+        ak.Input(shape=(32,)).build_node(kerastuner.HyperParameters()),
     )

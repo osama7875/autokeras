@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import tensorflow as tf
+from tensorflow.python.util import nest
 
 from autokeras import adapters
 from autokeras import analysers
@@ -36,15 +37,24 @@ def deserialize(config, custom_objects=None):
     )
 
 
-class Input(io_hypermodel.IOHyperModel, node_module.Node):
+class Input(node_module.Node, io_hypermodel.IOHyperModel):
     """Input node for tensor data.
 
     The data should be numpy.ndarray or tf.data.Dataset.
-    """
 
-    def build(self, hp):
-        input_node = tf.keras.Input(shape=self.shape, dtype=tf.float32)
-        return input_node, input_node
+    # Arguments
+        name: String. The name of the input node. If unspecified, it will be set
+            automatically with the class name.
+    """
+    def __init__(self, name=None, **kwargs):
+        super().__init__(name=name, **kwargs)
+        self.shape = None
+
+    def build_node(self, hp):
+        return tf.keras.Input(shape=self.shape, dtype=tf.float32)
+
+    def build(self, hp, inputs=None):
+        return inputs
 
     def get_adapter(self):
         return adapters.InputAdapter()
@@ -65,14 +75,22 @@ class ImageInput(Input):
     The input data should be numpy.ndarray or tf.data.Dataset. The shape of the data
     should be should be (samples, width, height) or
     (samples, width, height, channels).
-    """
 
-    def build(self, hp):
-        input_node = tf.keras.Input(shape=self.shape, dtype=tf.float32)
-        output_node = input_node
+    # Arguments
+        name: String. The name of the input node. If unspecified, it will be set
+            automatically with the class name.
+    """
+    def __init__(self, name=None, **kwargs):
+        super().__init__(name=name, **kwargs)
+
+    def build_node(self, hp):
+        return tf.keras.Input(shape=self.shape, dtype=tf.float32)
+
+    def build(self, hp, inputs=None):
+        output_node = nest.flatten(inputs)[0]
         if len(output_node.shape) == 3:
             output_node = tf.expand_dims(output_node, axis=-1)
-        return input_node, output_node
+        return output_node
 
     def get_adapter(self):
         return adapters.ImageAdapter()
@@ -90,14 +108,23 @@ class TextInput(Input):
     The input data should be numpy.ndarray or tf.data.Dataset. The data should be
     one-dimensional. Each element in the data should be a string which is a full
     sentence.
+
+    # Arguments
+        name: String. The name of the input node. If unspecified, it will be set
+            automatically with the class name.
     """
 
-    def build(self, hp):
-        input_node = tf.keras.Input(shape=self.shape, dtype=tf.string)
-        output_node = input_node
+    def __init__(self, name=None, **kwargs):
+        super().__init__(name=name, **kwargs)
+
+    def build_node(self, hp):
+        return tf.keras.Input(shape=self.shape, dtype=tf.string)
+
+    def build(self, hp, inputs=None):
+        output_node = nest.flatten(inputs)[0]
         if len(output_node.shape) == 1:
             output_node = tf.expand_dims(output_node, axis=-1)
-        return input_node, output_node
+        return output_node
 
     def get_adapter(self):
         return adapters.TextAdapter()
@@ -126,16 +153,17 @@ class StructuredDataInput(Input):
             If None, it will be inferred from the data. A column will be judged as
             categorical if the number of different values is less than 5% of the
             number of instances.
+        name: String. The name of the input node. If unspecified, it will be set
+            automatically with the class name.
     """
 
-    def __init__(self, column_names=None, column_types=None, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, column_names=None, column_types=None, name=None, **kwargs):
+        super().__init__(name=name, **kwargs)
         self.column_names = column_names
         self.column_types = column_types
 
-    def build(self, hp):
-        input_node = tf.keras.Input(shape=self.shape, dtype=self.dtype)
-        return input_node, input_node
+    def build_node(self, hp):
+        return tf.keras.Input(shape=self.shape, dtype=self.dtype)
 
     def get_config(self):
         config = super().get_config()
@@ -178,26 +206,21 @@ class TimeseriesInput(StructuredDataInput):
             If None, it will be inferred from the data. A column will be judged as
             categorical if the number of different values is less than 5% of the
             number of instances.
+        name: String. The name of the input node. If unspecified, it will be set
+            automatically with the class name.
     """
 
     def __init__(
-        self, lookback=None, column_names=None, column_types=None, **kwargs
+        self, lookback=None, column_names=None, column_types=None, name=None, **kwargs
     ):
         super().__init__(
-            column_names=column_names, column_types=column_types, **kwargs
+            column_names=column_names, column_types=column_types, name=name, **kwargs
         )
         self.lookback = lookback
 
-    def build(self, hp):
-        if len(self.shape) == 1:
-            self.shape = (
-                self.lookback,
-                self.shape[0],
-            )
-        print(self.shape)
-        print(self.dtype)
-        input_node = tf.keras.Input(shape=self.shape, dtype=self.dtype)
-        return input_node, input_node
+    def build_node(self, hp):
+        input_node = tf.keras.Input(shape=(self.lookback, self.shape[0]), dtype=self.dtype)
+        return input_node
 
     def get_config(self):
         config = super().get_config()
@@ -214,6 +237,9 @@ class TimeseriesInput(StructuredDataInput):
 
     def get_block(self):
         return blocks.TimeseriesBlock()
+
+    def config_from_analyser(self, analyser):
+        super().config_from_analyser(analyser)
 
     def get_hyper_preprocessors(self):
         hyper_preprocessors = []
