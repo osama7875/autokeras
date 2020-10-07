@@ -225,10 +225,7 @@ class TimeseriesInput(StructuredDataInput):
         self.lookback = lookback
 
     def build_node(self, hp):
-        input_node = tf.keras.Input(
-            shape=(self.lookback, self.shape[0]), dtype=self.dtype
-        )
-        return input_node
+        return tf.keras.Input(shape=self.shape, dtype=self.dtype)
 
     def get_config(self):
         config = super().get_config()
