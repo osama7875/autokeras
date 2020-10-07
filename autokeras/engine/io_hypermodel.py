@@ -23,8 +23,9 @@ class IOHyperModel(block_module.Block):
     input nodes and heads.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, shape=None, **kwargs):
         super().__init__(**kwargs)
+        self.shape = shape
         self.data_shape = None
         self.dtype = None
         self.batch_size = None
@@ -64,3 +65,8 @@ class IOHyperModel(block_module.Block):
             A list of HyperPreprocessors for the corresponding data.
         """
         raise NotImplementedError
+
+    def get_config(self):
+        config = super().get_config()
+        config.update({"shape": self.shape})
+        return config

@@ -17,7 +17,6 @@ import tensorflow as tf
 
 from autokeras import blocks
 from autokeras import nodes
-from autokeras import preprocessors
 
 
 def test_input_get_block_return_general_block():
@@ -26,8 +25,7 @@ def test_input_get_block_return_general_block():
 
 
 def test_time_series_input_node_build_to_a_tensor():
-    node = nodes.TimeseriesInput(lookback=2)
-    node.shape = (32,)
+    node = nodes.TimeseriesInput(lookback=2, shape=(32,))
     hp = kerastuner.HyperParameters()
 
     input_node = node.build_node(hp)
@@ -37,9 +35,8 @@ def test_time_series_input_node_build_to_a_tensor():
 
 
 def test_time_series_input_node_deserialize_build_to_tensor():
-    node = nodes.TimeseriesInput(lookback=2)
+    node = nodes.TimeseriesInput(lookback=2, shape=(32,))
     node = nodes.deserialize(nodes.serialize(node))
-    node.shape = (32,)
     hp = kerastuner.HyperParameters()
 
     input_node = node.build_node(hp)

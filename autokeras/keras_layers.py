@@ -28,7 +28,6 @@ NONE = "none"
 ONE_HOT = "one-hot"
 
 
-
 @tf.keras.utils.register_keras_serializable()
 class MultiCategoryEncoding(preprocessing.PreprocessingLayer):
     """Encode the categorical features to numerical features.
@@ -73,7 +72,11 @@ class MultiCategoryEncoding(preprocessing.PreprocessingLayer):
                 )
                 output_nodes.append(imputed)
             else:
-                output_nodes.append(data_utils.cast_to_float32(encoding_layer(data_utils.cast_to_string(input_node))))
+                output_nodes.append(
+                    data_utils.cast_to_float32(
+                        encoding_layer(data_utils.cast_to_string(input_node))
+                    )
+                )
         if len(output_nodes) == 1:
             return output_nodes[0]
         return tf.keras.layers.Concatenate()(output_nodes)

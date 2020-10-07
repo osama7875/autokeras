@@ -46,9 +46,9 @@ class Input(node_module.Node, io_hypermodel.IOHyperModel):
         name: String. The name of the input node. If unspecified, it will be set
             automatically with the class name.
     """
+
     def __init__(self, name=None, **kwargs):
         super().__init__(name=name, **kwargs)
-        self.shape = None
 
     def build_node(self, hp):
         return tf.keras.Input(shape=self.shape, dtype=tf.float32)
@@ -80,6 +80,7 @@ class ImageInput(Input):
         name: String. The name of the input node. If unspecified, it will be set
             automatically with the class name.
     """
+
     def __init__(self, name=None, **kwargs):
         super().__init__(name=name, **kwargs)
 
@@ -211,7 +212,12 @@ class TimeseriesInput(StructuredDataInput):
     """
 
     def __init__(
-        self, lookback=None, column_names=None, column_types=None, name=None, **kwargs
+        self,
+        lookback=None,
+        column_names=None,
+        column_types=None,
+        name=None,
+        **kwargs
     ):
         super().__init__(
             column_names=column_names, column_types=column_types, name=name, **kwargs
@@ -219,7 +225,9 @@ class TimeseriesInput(StructuredDataInput):
         self.lookback = lookback
 
     def build_node(self, hp):
-        input_node = tf.keras.Input(shape=(self.lookback, self.shape[0]), dtype=self.dtype)
+        input_node = tf.keras.Input(
+            shape=(self.lookback, self.shape[0]), dtype=self.dtype
+        )
         return input_node
 
     def get_config(self):
